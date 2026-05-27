@@ -1,8 +1,10 @@
-from pydantic_settings import BaseSettings ,SettingsConfigDict
+from pathlib import Path
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT_ENV_PATH = Path(__file__).resolve().parents[5] / ".env"
 
 class Config(BaseSettings):
-    GOOGLE_API_KEY:str
-    
-model_config=SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=ROOT_ENV_PATH)
+    GOOGLE_API_KEY: str
 
-config=Config() # type: ignore
+config = Config()  # type: ignore
