@@ -6,9 +6,16 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "google-genai>=2.6.0",
+    "httpx>=0.28.1",
     "ipykernel>=7.2.0",
+    "openai>=2.38.0",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",
     "python-dotenv>=1.2.2",
     "streamlit>=1.57.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "apps/api",
 ]
