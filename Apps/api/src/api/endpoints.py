@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Request
-from api.api.models import RAGRequest, RAGResponse, RAGUsedContext
-from api.agents.retrieval_generation import rag_pipeline_wrapper
-from qdrant_client import QdrantClient
+from fastapi import APIRouter, Request  # pyright: ignore[reportMissingImports]
+from .models import RAGRequest, RAGResponse, RAGUsedContext
+from src.agent.reterivalgeneration import rag_pipeline_wrapper  # pyright: ignore[reportMissingImports]
 import logging
 
 logging.basicConfig(

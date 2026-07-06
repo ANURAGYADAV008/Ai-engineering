@@ -1,11 +1,14 @@
-from fastapi import FastAPI
 import logging
+import sys
+from pathlib import Path
 
-from api.api.middleware import RequestIDMiddleware
-from fastapi.middleware.cors import CORSMiddleware
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from api.api.endpoints import api_router
-from api.core.config import config
+from fastapi import FastAPI  # type: ignore[import]
+from api.middleware import RequestIDMiddleware  # type: ignore[import]
+from starlette.middleware.cors import CORSMiddleware
+
+from api.src.api.endpoints import api_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,4 +30,3 @@ app.add_middleware(
 )
 
 app.include_router(api_router)
-
