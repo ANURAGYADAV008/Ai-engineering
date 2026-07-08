@@ -5,7 +5,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance,VectorParams,PointStruct
 load_dotenv()
 client=OpenAI()
-from langsmith import traceable
+from langsmith import traceable,get_current_run_tree
 
 
 
@@ -15,13 +15,21 @@ QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 
 @traceable(
     name="embed_query",
-    run_type="get_embedding"
+    run_type="get_embedding",
+    metadata={"ls_provider":"openai","ls_modelname":"text-embedding-3-small"}
 )
 def get_embedding(text,model="text-embedding-3-small"):
     response=client.embeddings.create(
         model=model,
         input=text
     )
+    current_run=get_current_run_tree()
+    if current_run:
+        current_run.metadata["usage_metadata"]={
+            "input_token":response.usage.prompt_tokens,
+            "output_token":response.usage.total_tokens
+
+        }
     return response.data[0].embedding
 
 @traceable(
@@ -111,7 +119,8 @@ Answer:
 
 @traceable(
     name="generate_chat",
-    run_type="prompt"
+    run_type="prompt",
+    metadata={"ls_provider":"openai","ls_modelname":"gpt-4.1-nano"}
 )
 def generate_chat(prompt):
     response = client.chat.completions.create(
@@ -126,6 +135,14 @@ def generate_chat(prompt):
         temperature=0.2,
         max_tokens=300
     )
+    current_run=get_current_run_tree()
+    if current_run:
+        current_run.metadata["usage_metadata"]={
+            "input_token":response.usage.prompt_tokens,
+            "output_token":response.usage.completion_tokens,
+            "total_token":response.usage.total_tokens
+
+        }
 
     return response.choices[0].message.content
 

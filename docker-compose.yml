@@ -20,10 +20,21 @@ services:
     env_file:
       - .env
     environment:
-      # Point at the standalone Qdrant running on the host (holds Amazon_items_collection-00).
-      - QDRANT_URL=http://host.docker.internal:6333
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - QDRANT_URL=http://qdrant:6333
     restart: unless-stopped
+    depends_on:
+      - qdrant
     volumes:
       - ./Apps/api/src:/app/src
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+
+volumes:
+  qdrant_storage:
