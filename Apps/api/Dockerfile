@@ -8,7 +8,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
         "openai>=1.0.0" \
         "qdrant-client>=1.7.0" \
         "python-dotenv>=1.0.0" \
-        "langsmith>=0.1.0"
+        "langsmith>=0.1.0" \
+        "instructor"
 COPY src/ ./src/
 EXPOSE 8000
 CMD ["python", "-m", "src.main"]

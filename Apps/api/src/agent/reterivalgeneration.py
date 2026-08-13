@@ -6,7 +6,16 @@ from qdrant_client.models import Distance,VectorParams,PointStruct
 load_dotenv()
 client=OpenAI()
 from langsmith import traceable,get_current_run_tree
+import instructor
+from pydantic import BaseModel, Field
 
+class RAGUsedContext(BaseModel):
+    id:str=Field(description="The ID Of the item used answer the questions")
+    description:str=Field(description="Short description of the item used to answer the Question")
+
+class RAGGenerationResponse(BaseModel):
+    answer:str=Field(description="The Answer of the Question")
+    refernces:list[RAGUsedContext]=Field(description="List of item used to answer the Question")
 
 
 
@@ -58,7 +67,7 @@ def reteriver_data(query, qdrant_client, k):
         retrieved_context.append(payload.get("description", ""))
         retrieved_context_rating.append(payload.get("average_rating"))
         similarity_scores.append(point.score)
-        retrieved_image_urls.append(payload.get("image_url", ""))
+        retrieved_image_urls.append(payload.get("image", ""))
         retrieved_prices.append(payload.get("price"))
 
     return (
@@ -74,14 +83,16 @@ def reteriver_data(query, qdrant_client, k):
     name="process_context",
     run_type="process_context"
 )
-def process_context(context, ids, ratings, scores):
+def process_context(context, ids, ratings, scores,images,price):
     formatted_context = ""
 
-    for id, chunk, rating, score in zip(ids, context, ratings, scores):
+    for id, chunk, rating, score ,images,price,in zip(ids, context, ratings, scores,images,price):
         formatted_context += (
             f"- ID: {id}\n"
             f"  Description: {chunk}\n"
             f"  Rating: {rating}\n"
+            f"  Image: {images}\n"
+            f"  Price: {price}\n"
             f"  Similarity Score: {score:.4f}\n\n"
         )
 
@@ -103,6 +114,7 @@ Rules:
   "I couldn't find that information in the retrieved products."
 - Keep your answer concise and helpful.
 - Mention product IDs when relevant.
+- And One Import Point Description Should be Small Like 50-100 words Max
 
 ======================
 Retrieved Context:
@@ -123,28 +135,26 @@ Answer:
     metadata={"ls_provider":"openai","ls_modelname":"gpt-4.1-nano"}
 )
 def generate_chat(prompt):
-    response = client.chat.completions.create(
+    client_inst = instructor.from_openai(OpenAI())
+
+    response, raw_response = client_inst.chat.completions.create_with_completion(
         model="gpt-4.1-nano",
         messages=[
-            {
-                "role": "system",
-                "content": prompt
-            },
-            
+            {"role": "system", "content": prompt},
         ],
         temperature=0.2,
-        max_tokens=300
+        response_model=RAGGenerationResponse
     )
-    current_run=get_current_run_tree()
-    if current_run:
-        current_run.metadata["usage_metadata"]={
-            "input_token":response.usage.prompt_tokens,
-            "output_token":response.usage.completion_tokens,
-            "total_token":response.usage.total_tokens
 
+    current_run = get_current_run_tree()
+    if current_run:
+        current_run.metadata["usage_metadata"] = {
+            "input_token": raw_response.usage.prompt_tokens,
+            "output_token": raw_response.usage.completion_tokens,
+            "total_token": raw_response.usage.total_tokens,
         }
 
-    return response.choices[0].message.content
+    return response
 
 @traceable(
     name="rag_pipeline"
@@ -152,57 +162,45 @@ def generate_chat(prompt):
 def rag_pipeline(question, top_k=5):
     qdrant_client = QdrantClient(QDRANT_URL)
 
-    retrieved_context = reteriver_data(
-        question,
-        qdrant_client,
-        top_k
+    context, ids, ratings, scores, images, prices = reteriver_data(
+        question, qdrant_client, top_k
     )
 
-    processed_context = process_context(
-        retrieved_context[0],
-        retrieved_context[1],
-        retrieved_context[2],
-        retrieved_context[3]
-    )
-
-    prompt = build_prompt(
-        processed_context,
-        question
-    )
-
-    answer = generate_chat(prompt)
-
-    return answer
-
-@traceable(
-    name="rag_pipeline_wrapper"
-)
-def rag_pipeline_wrapper(question, top_k=5):
-    """Run the RAG pipeline and return a dict shaped for the API response:
-    {"answer": str, "used_context": [{"image_url", "price", "description"}, ...]}.
-    """
-    qdrant_client = QdrantClient(QDRANT_URL)
-
-    (
-        context,
-        ids,
-        ratings,
-        scores,
-        image_urls,
-        prices,
-    ) = reteriver_data(question, qdrant_client, top_k)
-
-    processed_context = process_context(context, ids, ratings, scores)
+    processed_context = process_context(context, ids, ratings, scores, images, prices)
     prompt = build_prompt(processed_context, question)
     answer = generate_chat(prompt)
 
-    used_context = [
-        {
-            "image_url": image_url or "",
-            "price": price,
-            "description": description or "",
-        }
-        for image_url, price, description in zip(image_urls, prices, context)
-    ]
+    return {
+        "answer": answer,
+        "question": question,
+        "retrieved_context_ids": ids,
+        "retrieved_context": context,
+        "similarity_scores": scores,
+        "images": images,
+        "prices": prices,
+    } 
 
-    return {"answer": answer, "used_context": used_context}
+
+@traceable(name="rag_pipeline_wrapper")
+def rag_pipeline_wrapper(question, top_k=5):
+    """Shape rag_pipeline's output for the API response."""
+    result = rag_pipeline(question, top_k)
+
+    used_context = []
+    for image, price, description in zip(
+        result["images"], result["prices"], result["retrieved_context"]
+    ):
+        desc = description or ""
+        words = desc.split()
+        if len(words) > 50:
+            desc = " ".join(words[:50]) + "..."
+        used_context.append({
+            "image_url": image or "",
+            "price": price,
+            "description": desc
+        })
+
+    return {"answer": result["answer"].answer, "used_context": used_context}
+
+
+    

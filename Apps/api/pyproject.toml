@@ -11,4 +11,5 @@ dependencies = [
     "qdrant-client>=1.7.0",
     "python-dotenv>=1.0.0",
     "langsmith>=0.9.7",
+    "instructor",
 ]
