@@ -1,0 +1,107 @@
+Cell 2:
+from qdrant_client import QdrantClient
+from qdrant_client.models import VectorParams,Distance,PayloadSchemaType,PointStruct,SparseVectorParams,Document,Prefetch,FusionQuery
+from qdrant_client import models
+import pandas as pd
+import openai
+import fastembed
+import os
+---
+Cell 3:
+QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+---
+Cell 5:
+quadrant_client=QdrantClient(url="http://localhost:6333/")
+---
+Cell 6:
+quadrant_client.create_collection(
+    collection_name="Amazon-items-collection-01-hybrid-serach",
+    vectors_config={
+        "text-embedding-model-3-small":VectorParams(size=1536,distance=Distance.COSINE)
+    }
+    ,
+    sparse_vectors_config={
+        "bm25":SparseVectorParams(modifier=models.Modifier.IDF)
+    }
+)
+---
+Cell 7:
+def get_embedding(text,model="text-embedding-3-small"):
+    response=openai.embeddings.create(
+        input=[text],
+        model=model
+    )
+    return response.data[0].embedding
+---
+Cell 8:
+def get_embedding_batch(text_list,model="text-embedding-3-small",batch_size=100):
+    if len(text_list)<=batch_size:
+        response=openai.embeddings.create(input=text_list,model=model)
+        return [embedding.embedding for embedding in response.data]
+
+    all_embeddings=[]
+    counter=1
+    for i in range(0,len(text_list),batch_size):
+        batch=text_list[i:i+batch_size]
+        response=openai.embeddings.create(input=batch,model=model)
+        all_embeddings.extend([embedding.embedding for embedding in response.data])
+        counter+=1
+    
+    return all_embeddings
+        
+---
+Cell 10:
+df_items=pd.read_json("C:\\Users\\jaysi\\Desktop\\Desktop\\Ai-engineering\\data\\meta_Electronics_2022_23_with_categeory_rating_100_sample_2000.jsonl",lines=True)
+---
+Cell 11:
+df_items.head()
+---
+Cell 12:
+def preprocessed_decription(row):
+    return f"{row['title']}{''.join(row['features'])}"
+---
+Cell 13:
+def extrect_first_large_image(row):
+    return row['images'][0].get("large","")
+---
+Cell 14:
+df_items['description']=df_items.apply(preprocessed_decription,axis=1)
+df_items['image']=df_items.apply(extrect_first_large_image,axis=1)
+---
+Cell 15:
+data_to_embed=df_items[["description","image","rating_number","price","average_rating","parent_asin"]].to_dict(orient="records")
+---
+Cell 16:
+len(data_to_embed)
+---
+Cell 17:
+text_to_embed=[data["description"] for data in data_to_embed]
+---
+Cell 18:
+text_to_embed
+---
+Cell 19:
+embeddings=embeddings
+---
+Cell 20:
+print(embeddings)
+---
+Cell 21:
+pointstructs=[]
+i=1
+for embedding,data in zip(embeddings,data_to_embed):
+    pointstructs.append(
+        PointStruct(
+            id=i,
+            vector={
+                "text-embedding-3-small":embedding,
+                "bm25":Document(
+                    text=data["description"],
+                    model="qdrant/bm25"
+                )
+            },
+            payload=data
+        )
+    )
+    i+=1
+---

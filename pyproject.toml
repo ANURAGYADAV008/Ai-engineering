@@ -32,5 +32,6 @@ members = [
 
 [dependency-groups]
 dev = [
+    "cohere>=7.0.8",
     "matplotlib>=3.10.9",
 ]
