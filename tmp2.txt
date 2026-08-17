@@ -1,0 +1,176 @@
+  class QueryExpandResponse(BaseModel):
+      expanded_query: List[str] = Field(description="A list of statements that are related to the original query")
+  
+  def query_espansion_node(query: str) -> dict:
+      prompt_template = """
+      You are a query expansion module in a shopping assistant. Your job is to rewrite the customer's query into distinct statements for semantic search.
+      ## Instructions:
+      - Expand the customer's query into a list of distinct statements (1 to 5 concise statements)
+      - Each statement should capture a separate product or attribute from the query
+      - Use natural product description language
+      - Do not produce multiple statements that express the same intent
+  
+      ## Examples:
+      Query: "Can I get a tablet for my kid, a watch for me and a laptop for my wife?"
+      Statements:
+      - tablet for kids
+      - watch for adults
+      - laptop
+  
+      Query: "I need a warm winter jacket for hiking"
+      Statements:
+      - warm winter jacket
+      - hiking outfit for cold weather
+  
+      <query>:
+      {{query}}
+      </query>
+      """
+      template = Template(prompt_template)
+      prompt = template.render(query=query)
+      
+      client = instructor.from_provider(
+          "openai/gpt-5.4-nano",
+          mode=instructor.Mode.RESPONSES_TOOLS
+      )
+      response, raw_response = client.create_with_completion(
+          messages = [
+              {"role":"system", "content":prompt},
+          ],
+          response_model=QueryExpandResponse,
+          reasoning={"effort":"none"}
+      )
+      return {
+          'queries': response.statements
+      }
+
+  class QueryExpandResponse(BaseModel):
+      statements: List[str] = Field(description="A list of statements that are related to the original query")
+
+  @traceable(
+      name="query_expansion",
+      run_type="llm"
+  )
+  def query_expansion_node(state:State) -> dict:
+      prompt_template = """
+      You are a query expansion module in a shopping assistant. Your job is to rewrite the customer's query into distinct statements for semantic search.
+      ## Instructions:
+      - Expand the customer's query into a list of distinct statements (1 to 5 concise statements)
+      - Each statement should capture a separate product or attribute from the query
+      - Use natural product description language
+      - Do not produce multiple statements that express the same intent
+  
+      ## Examples:
+      Query: "Can I get a tablet for my kid, a watch for me and a laptop for my wife?"
+      Statements:
+      - tablet for kids
+      - watch for adults
+      - laptop
+  
+      Query: "I need a warm winter jacket for hiking"
+      Statements:
+      - warm winter jacket
+      - hiking outfit for cold weather
+  
+      <query>:
+      {{query}}
+      </query>
+      """
+      template = Template(prompt_template)
+      prompt = template.render(query=state.initial_query)
+      
+      client = instructor.from_provider(
+          "openai/gpt-5.4-nano",
+          mode=instructor.Mode.RESPONSES_TOOLS
+      )
+      response, raw_response = client.create_with_completion(
+          messages = [
+              {"role":"system", "content":prompt},
+          ],
+          response_model=QueryExpandResponse,
+          reasoning={"effort":"none"}
+      )
+      return {
+          'expanded_query': response.statements
+      }
+  
+
+  workflow = StateGraph(State)
+  
+  workflow.add_node("query_expansion_node", query_expansion_node)
+  workflow.add_node('retriever_node', retriever_node)
+  workflow.add_node('aggregator_node', aggregator_node)
+  
+  workflow.add_edge(START, "query_expansion_node")
+  workflow.add_edge("query_expansion_node", "retriever_node")
+  workflow.add_edge("retriever_node", "aggregator_node")
+  workflow.add_edge("aggregator_node", END)
+  
+  graph = workflow.compile()
+
+  class QueryExpandResponse(BaseModel):
+      query:List[str]
+
+  @traceable(
+      name="query_expansion",
+      run_type="llm"
+  )
+  def query_expansion_node(state:State) -> dict:
+      print("Heelllo mai hi hun")
+      prompt_template = """
+      You are a query expansion module in a shopping assistant. Your job is to rewrite the customer's query into distinct statements for semantic search.
+      ## Instructions:
+      - Expand the customer's query into a list of distinct statements (1 to 5 concise statements)
+      - Each statement should capture a separate product or attribute from the query
+      - Use natural product description language
+      - Do not produce multiple statements that express the same intent
+  
+      ## Examples:
+      Query: "Can I get a tablet for my kid, a watch for me and a laptop for my wife?"
+      Statements:
+      - tablet for kids
+      - watch for adults
+      - laptop
+  
+      Query: "I need a warm winter jacket for hiking"
+      Statements:
+      - warm winter jacket
+      - hiking outfit for cold weather
+  
+      <query>:
+      {{query}}
+      </query>
+      """
+      template = Template(prompt_template)
+      prompt = template.render(query=state.initial_query)
+      
+      client = instructor.from_provider(
+          "openai/gpt-5.4-nano",
+          mode=instructor.Mode.RESPONSES_TOOLS
+      )
+      response, raw_response = client.create_with_completion(
+          messages = [
+              {"role":"system", "content":prompt},
+          ],
+          response_model=QueryExpandResponse,
+          reasoning={"effort":"none"}
+      )
+      return {
+          'expanded_query': response.queries
+      }
+  
+
+  workflow = StateGraph(State)
+  
+  workflow.add_node("query_expansion_node", query_expansion_node)
+  workflow.add_node('retriever_node', retriever_node)
+  workflow.add_node('aggregator_node', aggregator_node)
+  
+  workflow.add_edge(START, "query_expansion_node")
+  workflow.add_conditional_edges("query_expansion_node",query_expand_condition_edges)
+  # workflow.add_edge("query_expansion_node", "retriever_node")
+  workflow.add_edge("retriever_node", "aggregator_node")
+  workflow.add_edge("aggregator_node", END)
+  
+  graph = workflow.compile()
+
