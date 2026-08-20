@@ -27,6 +27,22 @@ services:
     volumes:
       - ./Apps/api/src:/app/src
 
+  items-mcp:
+    build:
+      context: ./Apps/items_Mcp
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    restart: unless-stopped
+    depends_on:
+      - qdrant
+    volumes:
+      - ./Apps/items_Mcp/src:/app/src
+
   qdrant:
     image: qdrant/qdrant:latest
     ports:

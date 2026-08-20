@@ -1,0 +1,21 @@
+[project]
+name = "items-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Anurag Yadav", email = "jaysinghanurag321@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "cohere>=7.0.8",
+    "fastmcp>=3.4.7",
+    "openai>=2.38.0",
+    "pydantic>=2.13.4",
+    "python-dotenv>=1.2.2",
+    "qdrant-client>=1.18.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
