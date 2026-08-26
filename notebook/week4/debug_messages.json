@@ -1,0 +1,70 @@
+[
+  {
+    "role": "system",
+    "content": "sys prompt"
+  },
+  {
+    "role": "user",
+    "content": "can I get earPhones for myself, a labtop bag for my wife and and something cool for my kids"
+  },
+  {
+    "role": "assistant",
+    "tool_calls": [
+      {
+        "type": "function",
+        "id": "call_0",
+        "function": {
+          "name": "get_formatted_context",
+          "arguments": "{\"query\": \"earphones\", \"top_k\": 3}"
+        }
+      },
+      {
+        "type": "function",
+        "id": "call_1",
+        "function": {
+          "name": "get_formatted_context",
+          "arguments": "{\"query\": \"laptop bag\", \"top_k\": 3}"
+        }
+      },
+      {
+        "type": "function",
+        "id": "call_2",
+        "function": {
+          "name": "get_formatted_context",
+          "arguments": "{\"query\": \"cool kids items\", \"top_k\": 3}"
+        }
+      }
+    ],
+    "content": ""
+  },
+  {
+    "role": "tool",
+    "name": "get_formatted_context",
+    "tool_call_id": "call_0",
+    "content": "- ID: B0BTD88265..."
+  },
+  {
+    "role": "tool",
+    "name": "get_formatted_context",
+    "tool_call_id": "call_1",
+    "content": "- ID: B0BC9TB8ZV..."
+  },
+  {
+    "role": "tool",
+    "name": "get_formatted_context",
+    "tool_call_id": "call_2",
+    "content": "- ID: B0B2PMPJMV..."
+  },
+  {
+    "role": "assistant",
+    "content": "Here are some options for you..."
+  },
+  {
+    "role": "user",
+    "content": "can I get earPhones for myself, a labtop bag for my wife and and something cool for my kids"
+  },
+  {
+    "role": "user",
+    "content": "can I get earPhones for myself, a labtop bag for my wife and and something cool for my kids"
+  }
+]
