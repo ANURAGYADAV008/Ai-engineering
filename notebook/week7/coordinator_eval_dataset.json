@@ -1,0 +1,450 @@
+[
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Do you have running shoes under $100?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What are the specs of the Sony WH-1000XM4 headphones?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Can you compare the price of iPhone 15 with Samsung Galaxy S24?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Are there any customer reviews for this electric kettle?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Find me some wireless earbuds that have active noise cancellation."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Does the Kindle Paperwhite have a warm light option?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the average rating for the Hydro Flask trail series?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Does this blender come with a warranty?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "product_qna_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Add two red mugs and a blue shirt to my cart."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Can you remove the wireless mouse from my shopping cart?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is currently in my cart?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please increase the quantity of hoodies in my cart to 3."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Clear my entire shopping cart, please."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "How much is the total for my shopping cart right now?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Did the noise-cancelling headphones get added successfully?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "I'd like to decrease the number of water bottles in my cart by 1."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "shopping_cart_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Is item ID 'shoes-123' physically available in the warehouse?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Do we have enough warehouse stock of laptop-456 for 10 units?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please reserve 2 units of item ID 'desk-789' in the warehouse."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check the warehouse inventory level for 'chair-456'."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Is product ASIN 'B09VYGLLWH' in stock at the warehouse for delivery?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Reserve 1 unit of coffee-maker-123 in the warehouse."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Are there any units of item ID 'headset-888' remaining in stock in the warehouse?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Let's check if the warehouse has 'tent-999' physically stored."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "warehouse_manager_agent",
+      "coordinator_final_answer": false
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the weather today?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Can you tell me a joke about computers?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "How do I bake a key lime pie?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Who won the FIFA World Cup in 2022?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Hello there! Glad to meet you."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "How far is the moon from the earth?"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Book me a flight to San Francisco next week."
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  },
+  {
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Thanks for the help, goodbye!"
+        }
+      ]
+    },
+    "outputs": {
+      "next_agent": "",
+      "coordinator_final_answer": true
+    }
+  }
+]
